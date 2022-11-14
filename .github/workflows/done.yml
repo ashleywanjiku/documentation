@@ -47,7 +47,7 @@ jobs:
           context: .
           file : ./docker/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: $REGISTRY/$OWNER/$IMAGE_NAME:$(date +%s)
           labels: ${{ steps.meta.outputs.labels }}
           build_args:
              Environment=production
