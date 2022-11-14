@@ -1,1 +1,2 @@
-FROM busy
+FROM lee
+cmd echo"hello"
