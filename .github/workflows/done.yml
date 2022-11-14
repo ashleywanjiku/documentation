@@ -47,6 +47,7 @@ jobs:
           context: .
           file : ./Dockerfile
           push: true
-          tags: $REGISTRY/$OWNER/$IMAGE_NAME
+          tags: |
+             $REGISTRY/$OWNER/$IMAGE_NAME:$(date +%s)
           labels: ${{ steps.meta.outputs.labels }}
           
