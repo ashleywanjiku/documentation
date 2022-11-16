@@ -1,2 +1,3 @@
-FROM lee
+FROM Ubuntu
 cmd echo"hello"
+WORKDIR C/Users//Desktop/GitTest
