@@ -41,6 +41,8 @@ jobs:
       - run: cd documentaion
       - name : Open directory
         working-directory : documentation
+        run: |
+          ls -la
       - name: Build and push Docker images
         run : docker build . -t documentation_name --file Dockerfile --build-arg NPM_TOKEN=${{ secrets.GITHUB_TOKEN }}
         env:
