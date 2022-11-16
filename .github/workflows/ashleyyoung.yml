@@ -46,8 +46,8 @@ jobs:
       
         uses: docker/build-push-action@v2
         with:
-          context: C:/var/lib/docker/tmp/buildkit-mount852412474
-          file : C:/var/lib/docker/tmp/buildkit-mount852412474/Dockerfile
+          context: documentation/documentation
+          file : documentation/documentation/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
