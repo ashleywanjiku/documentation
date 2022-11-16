@@ -38,10 +38,18 @@ jobs:
             ghcr.io/${{ github.repository }}
             
       - name: Build and push Docker images
-        run : docker build . --file Dockerfile --build-arg NPM_TOKEN=${{ secrets.GITHUB_TOKEN }}
+       # run : docker build . --file Dockerfile --build-arg NPM_TOKEN=${{ secrets.GITHUB_TOKEN }}
         env:
          REGISTRY : ghcr.io
          OWNER : liquiid
          IMAGE_NAME : ${{github.repository}}
-      
+         
+      - name : Build and push action
+        uses: docker/build-push-action@v1
+        with:
+          context: .
+          file : Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           
