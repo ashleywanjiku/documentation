@@ -43,8 +43,6 @@ jobs:
          REGISTRY : ghcr.io
          OWNER : liquiid
          IMAGE_NAME : ${{github.repository}}
-         
-      - name : Build and push action
         uses: docker/build-push-action@v1
         with:
           context: .
