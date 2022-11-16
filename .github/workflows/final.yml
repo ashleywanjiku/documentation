@@ -1,0 +1,14 @@
+name : Build and publish
+
+on: push
+
+jobs:
+  Build:
+    runs-on : ubuntu
+    
+    steps:
+     - uses : action/checkout@v3
+     
+     - name :  Build docker
+       working-directory : dotnet
+       run : dotnet build. --file Dockerfile --tag my app : $(date +%s)
