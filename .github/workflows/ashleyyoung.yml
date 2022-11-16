@@ -46,8 +46,8 @@ jobs:
       
         uses: docker/build-push-action@v2
         with:
-          context: frontend
-          file : frontend/Dockerfile
+          context: Trial
+          file : Trial/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
