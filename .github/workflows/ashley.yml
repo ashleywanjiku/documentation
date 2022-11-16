@@ -1,0 +1,52 @@
+name : Image
+
+on: pull_request
+
+jobs:
+  push_to_registries:
+    name: Push Docker image to multiple registries
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: gamedesignerlee12
+          password: dckr_pat_C4HqRs8C3vdL_JfLOX66sKKHKvM
+      
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        env:
+         GITHUB_USER : ${{github.actor}}
+         GITHUB_TOKEN : ${{secrets.GITHUB_TOKEN}}
+        with:
+          registry: ghcr.io
+          username: $GITHUB_USER
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v2
+        with:
+          images: |
+            gamedesignerlee12/liquiid
+            ghcr.io/${{ github.repository }}
+      
+      - name: Build and push Docker images
+        env:
+         REGISTRY : ghcr.io
+         OWNER : liquiid
+         IMAGE_NAME : ${{github.repository}}
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          dockerfile : Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          
