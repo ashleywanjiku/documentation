@@ -1,6 +1,6 @@
 name : Publish docker image
 
-on :  release
+on :  push
  #types : [publish]
 
 jobs :
