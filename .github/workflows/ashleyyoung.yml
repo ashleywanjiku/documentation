@@ -46,8 +46,8 @@ jobs:
       
         uses: docker/build-push-action@v2
         with:
-          context: documentation/documentation
-          file : documentation/documentation/Dockerfile
+          context: documentation
+          file : documentation/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
