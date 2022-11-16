@@ -36,9 +36,10 @@ jobs:
           images: |
             gamedesignerlee12/liquiid
             ghcr.io/${{ github.repository }}
-      
+      - name : Open directory
+        working-directory : /documentation
       - name: Build and push Docker images
-        run : docker build . --file Dockerfile --build-arg NPM_TOKEN=${{ secrets.GITHUB_TOKEN }}
+        run : docker build . -t /documentation_name --file Dockerfile --build-arg NPM_TOKEN=${{ secrets.GITHUB_TOKEN }}
         env:
          REGISTRY : ghcr.io
          OWNER : liquiid
