@@ -1,3 +1,3 @@
 FROM Ubuntu
 cmd echo"hello"
-WORKDIR /documentation
+WORKDIR documentation
