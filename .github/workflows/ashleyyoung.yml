@@ -49,6 +49,6 @@ jobs:
           context: documentation
           file : documentation/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: liquiid:latest
+         # labels: ${{ steps.meta.outputs.labels }}
           
