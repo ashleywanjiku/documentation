@@ -1,6 +1,6 @@
 name : Image
 
-on: pull_request
+on: push
 
 jobs:
   push_to_registries:
