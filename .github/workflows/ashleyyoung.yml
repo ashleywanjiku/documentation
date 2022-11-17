@@ -1,9 +1,9 @@
-name : Image
+name : Build,test,pages,publish,release
 
 on: push
 
 jobs:
-  push_to_registries:
+  build_docker_images:
     name: Push Docker image to multiple registries
     runs-on: ubuntu-latest
     permissions:
@@ -52,3 +52,124 @@ jobs:
           tags: gamedesignelee12/ liquiid:latest
          # labels: ${{ steps.meta.outputs.labels }}
           
+  build:
+     runs-on: ubuntu-latest
+     
+     steps :
+        - uses : actions/checkout@v3
+        - name : Create build dir
+          run : cmake -E make_directory build
+          
+        - name : install doxygen
+          run : ${{('choco install doxygen.install') || 'sudo apt install doxygen') }}
+          
+        - name : Configure
+          run: |
+           cmake .. ${{ matrix.config.cmake_args }} -D CMAKE_BUILD_TYPE=Release -D DOXYBOOK_BUILD_TESTS=ON -D DOXYBOOK_BUILD_EXAMPLES=OFF -D DOXYBOOK_BUILD_DOCS=OFF -D DOXYBOOK_DEVELOPER_MODE=ON -D DOXYBOOK_CATCH2_REPORTER=junit -D DOXYBOOK_BUILD_COVERAGE_REPORT=${{ (matrix.config.coverage && 'ON') || 'OFF' }} -D DOXYBOOK_SANITIZERS=${{ ((matrix.config.asan || matrix.config.tsan) && 'ON') || 'OFF' }} -D DOXYBOOK_USE_FIND_PACKAGE=${{ (matrix.config.use_bundled && 'OFF') || 'ON' }} -D DOXYBOOK_USE_FETCH_CONTENT=${{ (matrix.config.use_bundled && 'OFF') || 'ON' }} ${{ (matrix.config.cc && format('-D CMAKE_C_COMPILER=/usr/bin/{0}', matrix.config.cc)) || '' }} ${{ (matrix.config.cxx && format('-D CMAKE_CXX_COMPILER=/usr/bin/{0}', matrix.config.cxx)) || '' }} ${{ (matrix.config.flags && format('-D CMAKE_CXX_FLAGS="{0}"', matrix.config.flags)) || '' }} -D BUILD_SHARED_LIBS=${{ (matrix.config.shared && 'ON') || 'OFF' }} -D CMAKE_CXX_STANDARD=${{ matrix.config.cxxstd || '17' }} -D CMAKE_INSTALL_PREFIX=./install ${{ (matrix.config.vcpkg && '-D VCPKG_TARGET_TRIPLET=') || '' }}${{ (matrix.config.vcpkg && contains( matrix.config.cmake_args, 'Win32') && 'x86-') || (matrix.config.vcpkg && 'x64-') || '' }}${{ (matrix.config.vcpkg && contains( matrix.config.os, 'macos') && 'osx') || ((matrix.config.vcpkg && contains( matrix.config.os, 'windows') && 'windows') || (matrix.config.vcpkg && 'linux') || '') }} ${{ (matrix.config.vcpkg && contains( matrix.config.os, 'windows') && '-D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake') || (matrix.config.vcpkg && '-D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake') || '' }}
+        
+        - name: Build
+          working-directory: ./ashleyyoung
+          run: cmake --build . --parallel ${{ steps.cpu-cores.outputs.count }} --config Release
+
+        - name: Install
+          working-directory: ./ashleyyoung
+          run: ${{ ((contains( matrix.config.os, 'ubuntu') || contains( matrix.config.os, 'macos')) && 'sudo') || '' }} cmake --install .
+
+  pages:
+    name: Pages
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+        
+      - name: Download GitBook CLI
+        shell: bash
+        run: |
+          sudo npm install gitbook-cli -g
+      - name: Install doxygen
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: doxygen
+          version: 1.0
+
+      - name: Install doxybook
+        run: |
+          cmake -E make_directory build
+          cd build
+          cmake .. -D CMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux -D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
+          cmake --build . --config Release
+          sudo cmake --install .
+      - name: Build main docs
+        run: |
+          cd docs
+          doxygen
+          cd ..
+          doxybook \
+            --input ./docs/xml \
+            --output ./docs/reference \
+            --config ./docs/.doxybook/config.json
+          mkdocs build
+          cp -rv ./site/. ${{ github.workspace }}/public
+      
+      - name: Build MkDocs - ReadTheDocs Reference
+        shell: bash
+        run: |
+          doxybook \
+            --input ./example/xml \
+            --output ./example/themes/mkdocs-readthedocs/docs \
+            --config ./example/themes/mkdocs-readthedocs/.doxybook/config.json
+          cd ./example/themes/mkdocs-readthedocs
+          mkdocs build
+          cp -rv ./site ${{ github.workspace }}/public/mkdocs-readthedocs
+      - name: Build MkDocs - Material Reference
+        shell: bash
+        run: |
+          doxybook \
+            --input ./example/xml \
+            --output ./example/themes/mkdocs-material/docs \
+            --config ./example/themes/mkdocs-material/.doxybook/config.json
+          cd ./example/themes/mkdocs-material
+          mkdocs build
+          cp -rv ./site ${{ github.workspace }}/public/mkdocs-material
+      - name: Build MkDocs - Bootswatch Reference
+        shell: bash
+        run: |
+          doxybook \
+            --input ./example/xml \
+            --output ./example/themes/mkdocs-bootswatch/docs \
+            --config ./example/themes/mkdocs-bootswatch/.doxybook/config.json
+          cd ./example/themes/mkdocs-bootswatch
+          mkdocs build
+          cp -rv ./site ${{ github.workspace }}/public/mkdocs-bootswatch
+      
+      - name: Build GitBook - Default Reference
+        shell: bash
+        run: |
+          doxybook \
+            --input ./example/xml \
+            --output ./example/themes/gitbook \
+            --config ./example/themes/gitbook/.doxybook/config.json \
+            --summary-input ./example/themes/gitbook/SUMMARY.md.tmpl \
+            --summary-output ./example/themes/gitbook/SUMMARY.md
+          cd ./example/themes/gitbook
+          gitbook build
+          cp -rv ./_book ${{ github.workspace }}/public/gitbook
+      - name: Build original
+        shell: bash
+        run: |
+          pwd
+          cp -rv ./example/html ${{ github.workspace }}/public/original
+          stat ${{ github.workspace }}/public
+      - name: Deploy
+        #if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/develop')
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ github.workspace }}/public
+          publish_branch: ${{ (startsWith(github.ref, 'refs/heads/master') && 'gh-pages') || 'gh-pages-develop' }}
+
+          
+       
