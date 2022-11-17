@@ -82,7 +82,7 @@ jobs:
         
         - name: Build
          # working-directory: doxygen
-          run: cmake --build . --parallel ${{ steps.cpu-cores.outputs.count }} --config Release
+          run: cmake --build . 
 
         - name: Install
          # working-directory: doxygen
