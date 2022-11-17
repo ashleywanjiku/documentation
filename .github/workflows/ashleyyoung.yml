@@ -60,8 +60,8 @@ jobs:
         - name : Create build dir
           run : cmake -E make_directory build
           
-        - name : install doxygen
-          run : ${{(contains ('choco install doxygen.install') || 'sudo apt install doxygen') }}
+       # - name : install doxygen
+         # run : ${{(contains ('choco install doxygen.install') || 'sudo apt install doxygen') }}
           
         - name : Configure
           run: |
