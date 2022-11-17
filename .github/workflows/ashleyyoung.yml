@@ -81,7 +81,7 @@ jobs:
            #${{ (matrix.config.vcpkg && contains( matrix.config.os, 'macos') && 'osx') || ((matrix.config.vcpkg && contains( matrix.config.os, 'windows') && 'windows') || (matrix.config.vcpkg && 'linux') || '') }} ${{ (matrix.config.vcpkg && contains( matrix.config.os, 'windows') && '-D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake') || (matrix.config.vcpkg && '-D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake') || '' }}
         
         - name: Build
-          working-directory: ./ashleyyoung
+          working-directory: ./doxygen
           run: cmake --build . --parallel ${{ steps.cpu-cores.outputs.count }} --config Release
 
         - name: Install
