@@ -180,9 +180,9 @@ jobs:
           sudo cmake --install .
       - name: Build main docs
         run: |
-          cd docs
+          cd documentation
           doxygen
-          cd documentation/documentation
+          cd ..
           doxybook \
             --input ./docs/xml \
             --output ./docs/reference \
