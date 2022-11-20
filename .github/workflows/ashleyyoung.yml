@@ -128,20 +128,22 @@ jobs:
         with:
           image_size: 100
           columns_per_row: 6
-          readme_path: ./README.md
-          committer_username: ashleywanjiku
-          committer_email: ashleewawa17@gmail.com
+          readme_path: docs/acknowledgments.md
+          committer_username: alandefreitas
+          committer_email: alandefreitas@gmail.com
         continue-on-error: true
 
       - name: List acknowledgments
         shell: bash
         run: |
-          cat ./README.md
+          cat docs/acknowledgments.md
+
       - name: Dependencies
         shell: bash
         run: |
           sudo apt-get install zip unzip python3-setuptools -y
           mkdir -p ${{ github.workspace }}/public
+
       - name: Download Node
         uses: actions/setup-node@v3
         with:
@@ -157,14 +159,17 @@ jobs:
           sudo mv ./hugo /usr/local/bin/hugo
           sudo chmod +x /usr/local/bin/hugo
           hugo version
+
       - name: Download MkDocs
         shell: bash
         run: |
           sudo python3 -m pip install mkdocs mkdocs-material mkdocs-bootswatch mkdocs-macros-plugin
+
       - name: Download GitBook CLI
         shell: bash
         run: |
           sudo npm install gitbook-cli -g
+
       - name: Install doxygen
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
@@ -178,37 +183,102 @@ jobs:
           cmake .. -D CMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux -D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
           cmake --build . --config Release
           sudo cmake --install .
+
       - name: Build main docs
         run: |
-           cd Doxygen
-           doxygen
-           cd ..
-           documentation \
-               --input ./Doxygen/xml \
-              --output ./Doxygen/reference \
-              --config ./Doxygen/.doxybook/config.json 
-           mkdocs build
-           cp -rv ./site/. ${{ github.workspace }}/public
-     
-     
-      - name: Build GitBook - Default Reference
-       # shell: bash
+          cd docs
+          doxygen
+          cd ..
+          doxybook \
+            --input ./docs/xml \
+            --output ./docs/reference \
+            --config ./docs/.doxybook/config.json
+          mkdocs build
+          cp -rv ./site/. ${{ github.workspace }}/public
+
+      - name: Build Example Doxygen
+        shell: bash
         run: |
-         doxybook2 \
-            --input documentation/doxyoutput/xml \
-            --output documentation/gitbook \
-            --config documentation/doxybook-config/gitbook/.doxybook/config.json \
-            --summary-input documentation/doxybook-config/gitbook/SUMMARY.md.tmpl \
-            --summary-output documentation/gitbook/SUMMARY.md
-          cd documentation/gitbook
+          cd example
+          doxygen
+
+      - name: Build MkDocs - ReadTheDocs Reference
+        shell: bash
+        run: |
+          doxybook \
+            --input ./example/xml \
+            --output ./example/themes/mkdocs-readthedocs/docs \
+            --config ./example/themes/mkdocs-readthedocs/.doxybook/config.json
+          cd ./example/themes/mkdocs-readthedocs
+          mkdocs build
+          cp -rv ./site ${{ github.workspace }}/public/mkdocs-readthedocs
+
+      - name: Build MkDocs - Material Reference
+        shell: bash
+        run: |
+          doxybook \
+            --input ./example/xml \
+            --output ./example/themes/mkdocs-material/docs \
+            --config ./example/themes/mkdocs-material/.doxybook/config.json
+          cd ./example/themes/mkdocs-material
+          mkdocs build
+          cp -rv ./site ${{ github.workspace }}/public/mkdocs-material
+
+      - name: Build MkDocs - Bootswatch Reference
+        shell: bash
+        run: |
+          doxybook \
+            --input ./example/xml \
+            --output ./example/themes/mkdocs-bootswatch/docs \
+            --config ./example/themes/mkdocs-bootswatch/.doxybook/config.json
+          cd ./example/themes/mkdocs-bootswatch
+          mkdocs build
+          cp -rv ./site ${{ github.workspace }}/public/mkdocs-bootswatch
+
+      - name: Build Hugo - Learn Reference
+        shell: bash
+        run: |
+          doxybook \
+            --input ./example/xml \
+            --output ./example/themes/hugo-learn/content \
+            --config ./example/themes/hugo-learn/.doxybook/config.json \
+            --templates ./example/themes/hugo-learn/.doxybook/templates
+          cd ./example/themes/hugo-learn
+          hugo
+          cp -rv ./public ${{ github.workspace }}/public/hugo-learn
+
+      - name: Build Hugo - Book Reference
+        shell: bash
+        run: |
+          doxybook \
+            --input ./example/xml \
+            --output ./example/themes/hugo-book/content \
+            --config ./example/themes/hugo-book/.doxybook/config.json \
+            --templates ./example/themes/hugo-book/.doxybook/templates
+          cd ./example/themes/hugo-book
+          hugo
+          cp -rv ./public ${{ github.workspace }}/public/hugo-book
+
+      - name: Build GitBook - Default Reference
+        shell: bash
+        run: |
+          doxybook \
+            --input ./example/xml \
+            --output ./example/themes/gitbook \
+            --config ./example/themes/gitbook/.doxybook/config.json \
+            --summary-input ./example/themes/gitbook/SUMMARY.md.tmpl \
+            --summary-output ./example/themes/gitbook/SUMMARY.md
+          cd ./example/themes/gitbook
           gitbook build
           cp -rv ./_book ${{ github.workspace }}/public/gitbook
+
       - name: Build original
         shell: bash
         run: |
           pwd
           cp -rv ./example/html ${{ github.workspace }}/public/original
           stat ${{ github.workspace }}/public
+
       - name: Deploy
         if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/develop')
         uses: peaceiris/actions-gh-pages@v3
@@ -216,19 +286,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ${{ github.workspace }}/public
           publish_branch: ${{ (startsWith(github.ref, 'refs/heads/master') && 'gh-pages') || 'gh-pages-develop' }}
-
-           
-        
-        
-       # - name: Build
-         # working-directory: doxygen
-         # run: cmake --build . --parallel ${{ steps.cpu-cores.outputs.count }} --config Release
-      - name : Build cmake
-        run :  |
-         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}      
-         cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-       
-      - name: Install
-         # working-directory: doxygen
-        run: cmake --install .
-        
