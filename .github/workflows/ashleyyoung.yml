@@ -182,7 +182,7 @@ jobs:
         run: |
           cd docs
           doxygen
-          cd ..
+          cd documentation/documentation
           doxybook \
             --input ./docs/xml \
             --output ./docs/reference \
