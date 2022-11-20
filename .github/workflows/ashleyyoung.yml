@@ -193,14 +193,14 @@ jobs:
      
       - name: Build GitBook - Default Reference
         shell: bash
-        run: |
-          doxybook \
-            --input ./example/xml \
-            --output ./example/themes/gitbook \
-            --config ./example/themes/gitbook/.doxybook/config.json \
-            --summary-input ./example/themes/gitbook/SUMMARY.md.tmpl \
-            --summary-output ./example/themes/gitbook/SUMMARY.md
-          cd ./example/themes/gitbook
+        run: 
+         doxybook \
+            --input documentation/doxyoutput/xml \
+            --output documentation/gitbook \
+            --config documentation/doxybook-config/gitbook/.doxybook/config.json \
+            --summary-input documentation/doxybook-config/gitbook/SUMMARY.md.tmpl \
+            --summary-output documentation/gitbook/SUMMARY.md
+          cd documentation/gitbook
           gitbook build
           cp -rv ./_book ${{ github.workspace }}/public/gitbook
       - name: Build original
