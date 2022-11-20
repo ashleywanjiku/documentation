@@ -178,21 +178,21 @@ jobs:
           cmake .. -D CMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux -D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
           cmake --build . --config Release
           sudo cmake --install .
-     # - name: Build main docs
-      #  run: |
-        #  cd Doxygen
-       #   doxygen
-         # cd ..
-          #doxybook \
-           #   --input ./docs/xml \
-            #  --output ./docs/reference \
-             # --config ./docs/.doxybook/config.json 
-          #mkdocs build
-          #cp -rv ./site/. ${{ github.workspace }}/public
+      - name: Build main docs
+        run: |
+           cd Doxygen
+           doxygen
+           cd doxybook2
+           doxybook2 \
+               --input ./docs/xml \
+              --output ./docs/reference \
+              --config ./docs/.doxybook/config.json 
+           mkdocs build
+           cp -rv ./site/. ${{ github.workspace }}/public
      
      
       - name: Build GitBook - Default Reference
-        shell: bash
+       # shell: bash
         run: |
          doxybook2 \
             --input documentation/doxyoutput/xml \
