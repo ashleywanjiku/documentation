@@ -182,7 +182,7 @@ jobs:
         run: |
            cd Doxygen
            doxygen
-           cd doxybook2
+           cd Doxygen
            doxybook2 \
                --input ./docs/xml \
               --output ./docs/reference \
