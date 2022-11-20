@@ -79,8 +79,9 @@ jobs:
          # working-directory: doxygen
           #run: cmake --build . --parallel ${{ steps.cpu-cores.outputs.count }} --config Release
         - name : Build cmake
-          run :  cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}      
-           cmake --build ${{github.workspace}}/build 
+          run :  |
+            cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}      
+            cmake --build ${{github.workspace}}/build 
        
         - name: Install
          # working-directory: doxygen
