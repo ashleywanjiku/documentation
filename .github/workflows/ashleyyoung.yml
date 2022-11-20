@@ -136,7 +136,7 @@ jobs:
       - name: List acknowledgments
         shell: bash
         run: |
-          cat docs/acknowledgments.md
+          cat ./README.md
 
       - name: Dependencies
         shell: bash
