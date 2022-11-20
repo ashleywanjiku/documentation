@@ -49,8 +49,8 @@ jobs:
           context: documentation
           file : documentation/Dockerfile
           push: true
-          tags: gamedesignelee12/ liquiid:latest
-         # labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{steps.meta.outputs.tags}}
+          labels: ${{ steps.meta.outputs.labels }}
           
   build:
      runs-on: ubuntu-latest
