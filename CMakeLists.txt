@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.2)
 
+project("pf" VERSION 1.0.1
+             DESCRIPTION "A header only c++ template library for fast particle filtering."
+             HOMEPAGE_URL "https://github.com/ashleywanjiku/documentation/pf")
+             
 target_include_directories(
   ${PROJECT_NAME}
   INTERFACE $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>
