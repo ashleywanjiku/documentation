@@ -180,7 +180,7 @@ jobs:
           sudo cmake --install .
       - name: Build main docs
         run: |
-          cd documentation/Doxygen
+          cd Doxygen
           doxygen
           cd ..
           doxybook \
