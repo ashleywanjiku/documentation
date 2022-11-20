@@ -149,10 +149,10 @@ jobs:
           committer_email: alandefreitas@gmail.com
         continue-on-error: true
 
-      - name: List acknowledgments
-        shell: bash
-        run: |
-          cat docs/acknowledgments.md
+     # - name: List acknowledgments
+       # shell: bash
+        #run: |
+          #cat docs/acknowledgments.md
       - name: Dependencies
         shell: bash
         run: |
