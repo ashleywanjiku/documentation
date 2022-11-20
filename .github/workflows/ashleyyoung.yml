@@ -115,13 +115,13 @@ jobs:
           name: Binary Packages ${{ matrix.config.artifact_name }}
           path: build/doxybook-?.?.?-*.*
 
-      - name: Check conventional commit
-        if: ${{ !contains( matrix.config.os, 'macos') && !contains(github.event.head_commit.message, '[FOLD]') }}
-        uses: webiny/action-conventional-commits@v1.1.0
+    #  - name: Check conventional commit
+      #  if: ${{ !contains( matrix.config.os, 'macos') && !contains(github.event.head_commit.message, '[FOLD]') }}
+        #uses: webiny/action-conventional-commits@v1.1.0
 
-      - name: Codecov generate
-        if: ${{ matrix.config.coverage }}
-        run: cmake --build ./build --target coverage
+      #- name: Codecov generate
+       # if: ${{ matrix.config.coverage }}
+       # run: cmake --build ./build --target coverage
 
      
 
