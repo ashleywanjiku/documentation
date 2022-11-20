@@ -66,9 +66,7 @@ jobs:
       - name : Config
         working-directory : ./build
         run : |
-          cmake ${{github.workspace}} ${{ matrix.config.cmake_args }}-D CMAKE_BUILD_TYPE=Release 
-            -D DOXYBOOK_BUILD_TESTS=ON -D DOXYBOOK_BUILD_EXAMPLES=OFF -D DOXYBOOK_BUILD_DOCS=OFF 
-             -D DOXYBOOK_DEVELOPER_MODE=ON -D DOXYBOOK_CATCH2_REPORTER=junit 
+          cmake ${{github.workspace}} ${{ matrix.config.cmake_args }} -D CMAKE_BUILD_TYPE=Release -D DOXYBOOK_BUILD_TESTS=ON -D DOXYBOOK_BUILD_EXAMPLES=OFF -D DOXYBOOK_BUILD_DOCS=OFF  -D DOXYBOOK_DEVELOPER_MODE=ON -D DOXYBOOK_CATCH2_REPORTER=junit 
              -D DOXYBOOK_BUILD_COVERAGE_REPORT=${{ (matrix.config.coverage && 'ON') || 'OFF' }} 
              -D DOXYBOOK_SANITIZERS=${{ ((matrix.config.asan || matrix.config.tsan) && 'ON') || 'OFF' }} 
               -D DOXYBOOK_USE_FIND_PACKAGE=${{ (matrix.config.use_bundled && 'OFF') || 'ON' }} 
