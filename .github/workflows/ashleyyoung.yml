@@ -193,8 +193,8 @@ jobs:
      
       - name: Build GitBook - Default Reference
         shell: bash
-        run: 
-         doxybook \
+        run: |
+         doxybook2 \
             --input documentation/doxyoutput/xml \
             --output documentation/gitbook \
             --config documentation/doxybook-config/gitbook/.doxybook/config.json \
