@@ -123,9 +123,7 @@ jobs:
         if: ${{ matrix.config.coverage }}
         run: cmake --build ./build --target coverage
 
-      - name: Codecov upload
-        if: ${{ matrix.config.coverage }}
-        uses: codecov/codecov-action@v3
+     
 
   pages:
     name: Pages
