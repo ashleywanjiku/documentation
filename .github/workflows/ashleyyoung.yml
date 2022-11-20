@@ -59,7 +59,34 @@ jobs:
       - uses : actions/checkout@v3
       - name : Create build dir
         run : cmake -E make_directory build
-          
+         
+      - name: Apt packages
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        if: ${{ contains( matrix.config.os, 'ubuntu') && (matrix.config.install || matrix.config.coverage) }}
+        with:
+          packages: ${{ (matrix.config.coverage && 'lcov') || '' }} ${{ matrix.config.install }}
+          version: 1.0
+
+      - name: Fetched Content
+        if: ${{ !matrix.config.use_bundled }}
+        id: cache-fetched-content
+        uses: actions/cache@v3
+        with:
+          path: build/_deps
+          key: ${{ matrix.config.os }}-fetched-content-${{ (contains( matrix.config.cmake_args, 'Win32') && 'x86') || 'x64' }}
+
+      - name: Update Vcpkg
+        if: ${{ matrix.config.vcpkg }}
+        shell: bash
+        run: |
+          cd ${{ (contains( matrix.config.os, 'windows') && 'C:\vcpkg') || '/usr/local/share/vcpkg' }}
+          git fetch origin
+          git reset --hard origin/master
+          if [ "${{ (contains( matrix.config.cmake_args, 'Win32') && 'x86') || 'x64' }}-${{ (contains( matrix.config.os, 'macos') && 'osx') || ((contains( matrix.config.os, 'windows') && 'windows') || 'linux') }}" == "x64-windows" ] || [ "${{ (contains( matrix.config.cmake_args, 'Win32') && 'x86') || 'x64' }}-${{ (contains( matrix.config.os, 'macos') && 'osx') || ((contains( matrix.config.os, 'windows') && 'windows') || 'linux') }}" == "x86-windows" ]; then
+            ./bootstrap-vcpkg.bat
+          else
+            ./bootstrap-vcpkg.sh
+          fi
       - name : install doxygen
         run :  sudo apt install doxygen
           
@@ -67,6 +94,7 @@ jobs:
         working-directory : ./build
         run : |
           cmake ${{github.workspace}} ${{ matrix.config.cmake_args }} -D CMAKE_BUILD_TYPE=Release -D DOXYBOOK_BUILD_TESTS=ON -D DOXYBOOK_BUILD_EXAMPLES=OFF -D DOXYBOOK_BUILD_DOCS=OFF -D DOXYBOOK_DEVELOPER_MODE=ON -D DOXYBOOK_CATCH2_REPORTER=junit -D DOXYBOOK_BUILD_COVERAGE_REPORT=${{ (matrix.config.coverage && 'ON') || 'OFF' }} -D DOXYBOOK_SANITIZERS=${{ ((matrix.config.asan || matrix.config.tsan) && 'ON') || 'OFF' }} -D DOXYBOOK_USE_FIND_PACKAGE=${{ (matrix.config.use_bundled && 'OFF') || 'ON' }} -D DOXYBOOK_USE_FETCH_CONTENT=${{ (matrix.config.use_bundled && 'OFF') || 'ON' }} ${{ (matrix.config.cc && format('-D CMAKE_C_COMPILER=/usr/bin/{0}', matrix.config.cc)) || '' }} ${{ (matrix.config.cxx && format('-D CMAKE_CXX_COMPILER=/usr/bin/{0}', matrix.config.cxx)) || '' }} ${{ (matrix.config.flags && format('-D CMAKE_CXX_FLAGS="{0}"', matrix.config.flags)) || '' }} -D BUILD_SHARED_LIBS=${{ (matrix.config.shared && 'ON') || 'OFF' }} -D CMAKE_CXX_STANDARD=${{ matrix.config.cxxstd || '17' }} -D CMAKE_INSTALL_PREFIX=./install ${{ (matrix.config.vcpkg && '-D VCPKG_TARGET_TRIPLET=') || '' }}${{ (matrix.config.vcpkg && contains( matrix.config.cmake_args, 'Win32') && 'x86-') || (matrix.config.vcpkg && 'x64-') || '' }}${{ (matrix.config.vcpkg && contains( matrix.config.os, 'macos') && 'osx') || ((matrix.config.vcpkg && contains( matrix.config.os, 'windows') && 'windows') || (matrix.config.vcpkg && 'linux') || '') }} ${{ (matrix.config.vcpkg && contains( matrix.config.os, 'windows') && '-D CMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake') || (matrix.config.vcpkg && '-D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake') || '' }}
+     
       - name: Build
         working-directory: ./build
         run: cmake --build . --parallel ${{ steps.cpu-cores.outputs.count }} --config Release
@@ -98,22 +126,9 @@ jobs:
         with:
           name: Binary Packages ${{ matrix.config.artifact_name }}
           path: build/doxybook-?.?.?-*.*
-
-      - name: Check conventional commit
-        if: ${{ !contains( matrix.config.os, 'macos') && !contains(github.event.head_commit.message, '[FOLD]') }}
-        uses: webiny/action-conventional-commits@v1.1.0
-
-      - name: Codecov generate
-        if: ${{ matrix.config.coverage }}
-        run: cmake --build ./build --target coverage
-
-      - name: Codecov upload
-        if: ${{ matrix.config.coverage }}
-        uses: codecov/codecov-action@v3
-
   pages:
     name: Pages
-    #needs: [build]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
