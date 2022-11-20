@@ -6,15 +6,15 @@ GENERATE_LATEX = NO
 GENERATE_XML = YES
 XML_OUTPUT = xml
 
-INPUT = ./../include/doxybook
-STRIP_FROM_PATH = ./../include
-INCLUDE_PATH = ./../include
+INPUT = ./,doxybook
+#STRIP_FROM_PATH = ./../include
+#INCLUDE_PATH = ./../include
 RECURSIVE = YES
-EXCLUDE = ./../include/doxybook/impl \
-          ./../include/doxybook/detail
+#EXCLUDE = ./../include/doxybook/impl \
+         # ./../include/doxybook/detail
 FILE_PATTERNS = *.hpp
 EXCLUDE_SYMBOLS = "std" "inja" "tinyxml2" "detail" "doxybook::detail" "detail::*" "doxybook::detail::*" "boost" "*_graph" "A" "Enable" "Proxy"
-EXAMPLE_PATH = ./../example/src
+EXAMPLE_PATH = . 
 EXAMPLE_PATTERNS = *.cpp
 
 DISTRIBUTE_GROUP_DOC=YES
