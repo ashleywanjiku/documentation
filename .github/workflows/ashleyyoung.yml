@@ -182,8 +182,7 @@ jobs:
         run: |
           cd Doxygen
           doxygen
-          cd ..
-          doxybook \
+          cd .. doxybook \
              --input ./docs/xml \
              --output ./docs/reference \
              --config ./docs/.doxybook/config.json
