@@ -182,12 +182,8 @@ jobs:
         run: |
           cd Doxygen
           doxygen
-          cd ..
-            doxybook \
-               --input ./docs/xml \
-               --output ./docs/reference \
-               --config ./docs/.doxybook/config.json 
-            mkdocs build
+          cd doxybook --input ./docs/xml --output ./docs/reference --config ./docs/.doxybook/config.json 
+          mkdocs build
           cp -rv ./site/. ${{ github.workspace }}/public
       - name: Build Example Doxygen
         shell: bash
