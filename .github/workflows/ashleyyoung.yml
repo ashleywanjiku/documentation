@@ -280,112 +280,12 @@ jobs:
        # - name: Build
          # working-directory: doxygen
          # run: cmake --build . --parallel ${{ steps.cpu-cores.outputs.count }} --config Release
-        - name : Build cmake
-          run :  |
-           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}      
-           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name : Build cmake
+        run :  |
+         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}      
+         cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
        
-        - name: Install
+      - name: Install
          # working-directory: doxygen
-          run: cmake --install .
+        run: cmake --install .
         
-
-  pages:
-    name: Pages
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: true
-        
-      - name: Download GitBook CLI
-        shell: bash
-        run: |
-          sudo npm install gitbook-cli -g
-      - name: Install doxygen
-        uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: doxygen
-          version: 1.0
-
-      - name: Install doxybook
-        run: |
-          cmake -E make_directory build
-          cd build
-          cmake .. -D CMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux -D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake 
-          - D CMAKE_INSTALL_PREFIX=/usr/local
-          cmake --build . --config Release
-          sudo cmake --install .
-      - name: Build main docs
-        run: |
-          cd docs
-          doxygen
-          cd ..
-          doxybook \
-            --input ./docs/xml \
-            --output ./docs/reference \
-            --config ./docs/.doxybook/config.json
-          mkdocs build
-          cp -rv ./site/. ${{ github.workspace }}/public
-      
-      - name: Build MkDocs - ReadTheDocs Reference
-        shell: bash
-        run: |
-          doxybook \
-            --input ./example/xml \
-            --output ./example/themes/mkdocs-readthedocs/docs \
-            --config ./example/themes/mkdocs-readthedocs/.doxybook/config.json
-          cd ./example/themes/mkdocs-readthedocs
-          mkdocs build
-          cp -rv ./site ${{ github.workspace }}/public/mkdocs-readthedocs
-      - name: Build MkDocs - Material Reference
-        shell: bash
-        run: |
-          doxybook \
-            --input ./example/xml \
-            --output ./example/themes/mkdocs-material/docs \
-            --config ./example/themes/mkdocs-material/.doxybook/config.json
-          cd ./example/themes/mkdocs-material
-          mkdocs build
-          cp -rv ./site ${{ github.workspace }}/public/mkdocs-material
-      - name: Build MkDocs - Bootswatch Reference
-        shell: bash
-        run: |
-          doxybook \
-            --input ./example/xml \
-            --output ./example/themes/mkdocs-bootswatch/docs \
-            --config ./example/themes/mkdocs-bootswatch/.doxybook/config.json
-          cd ./example/themes/mkdocs-bootswatch
-          mkdocs build
-          cp -rv ./site ${{ github.workspace }}/public/mkdocs-bootswatch
-      
-      - name: Build GitBook - Default Reference
-        shell: bash
-        run: |
-          doxybook \
-            --input ./example/xml \
-            --output ./example/themes/gitbook \
-            --config ./example/themes/gitbook/.doxybook/config.json \
-            --summary-input ./example/themes/gitbook/SUMMARY.md.tmpl \
-            --summary-output ./example/themes/gitbook/SUMMARY.md
-          cd ./example/themes/gitbook
-          gitbook build
-          cp -rv ./_book ${{ github.workspace }}/public/gitbook
-      - name: Build original
-        shell: bash
-        run: |
-          pwd
-          cp -rv ./example/html ${{ github.workspace }}/public/original
-          stat ${{ github.workspace }}/public
-      - name: Deploy
-        #if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/develop')
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ github.workspace }}/public
-          publish_branch: ${{ (startsWith(github.ref, 'refs/heads/master') && 'gh-pages') || 'gh-pages-develop' }}
-
-          
-       
