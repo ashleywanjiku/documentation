@@ -63,26 +63,7 @@ jobs:
         - name : install doxygen
           run :  sudo apt install doxygen
           
-        - name : Configure
-          run: |
-           cmake .. ${{ matrix.config.cmake_args }} 
-           -D CMAKE_BUILD_TYPE=Release -D DOXYBOOK_BUILD_TESTS=ON -D DOXYBOOK_BUILD_EXAMPLES=OFF 
-           -D DOXYBOOK_BUILD_DOCS=OFF -D DOXYBOOK_DEVELOPER_MODE=ON -D DOXYBOOK_CATCH2_REPORTER=junit
-           -D DOXYBOOK_BUILD_COVERAGE_REPORT=${{ (matrix.config.coverage && 'ON') || 'OFF' }}
-           -D DOXYBOOK_SANITIZERS=${{ ((matrix.config.asan || matrix.config.tsan) && 'ON') || 'OFF' }} 
-           -D DOXYBOOK_USE_FIND_PACKAGE=${{ (matrix.config.use_bundled && 'OFF') || 'ON' }} 
-           -D DOXYBOOK_USE_FETCH_CONTENT=${{ (matrix.config.use_bundled && 'OFF') || 'ON' }} 
-           ${{ (matrix.config.cc && format('-D CMAKE_C_COMPILER=/usr/bin/{0}', matrix.config.cc)) || '' }} 
-           ${{ (matrix.config.cxx && format('-D CMAKE_CXX_COMPILER=/usr/bin/{0}', matrix.config.cxx)) || '' }}
-           ${{ (matrix.config.flags && format('-D CMAKE_CXX_FLAGS="{0}"', matrix.config.flags)) || '' }}
-        
-        - name: Build
-         # working-directory: doxygen
-          run: cmake --build . --parallel ${{ steps.cpu-cores.outputs.count }} --config Release
-
-        - name: Install
-         # working-directory: doxygen
-          run: cmake --install .
+       
 
   pages:
     name: Pages
@@ -108,7 +89,7 @@ jobs:
         run: |
           cmake -E make_directory build
           cd build
-          cmake .. -D CMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux -D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
+          cmake .. -D CMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64 -D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
           cmake --build . --config Release
           sudo cmake --install .
       - name: Build main docs
