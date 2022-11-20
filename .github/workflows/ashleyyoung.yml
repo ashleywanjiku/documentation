@@ -316,11 +316,11 @@ jobs:
         if: ${{ matrix.config.coverage }}
         uses: codecov/codecov-action@v3
 
-  pages:
-    name: Pages
+    pages:
+     name: Pages
     #needs: [build]
-    runs-on: ubuntu-latest
-    steps:
+     runs-on: ubuntu-latest
+     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
