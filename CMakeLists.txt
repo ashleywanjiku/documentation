@@ -1,4 +1,4 @@
 cmake_minimum_required(VERSION 3.2)
 
-include($ENV{IDF_PATH} /home/runner/work/documentation/cmake/find.cmake)
-project(documentation)
+include($ENV{IDF_PATH} /tools/cmake/find.cmake)
+project(esp32-sniffer)
