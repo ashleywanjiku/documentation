@@ -178,70 +178,19 @@ jobs:
           cmake .. -D CMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux -D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake
           cmake --build . --config Release
           sudo cmake --install .
-      - name: Build main docs
-        run: |
-          cd Doxygen
-          doxygen
-          cd doxybook --input ./docs/xml --output ./docs/reference --config ./docs/.doxybook/config.json 
-          mkdocs build
-          cp -rv ./site/. ${{ github.workspace }}/public
-      - name: Build Example Doxygen
-        shell: bash
-        run: |
-          cd example
-          doxygen
-      - name: Build MkDocs - ReadTheDocs Reference
-        shell: bash
-        run: |
-          doxybook \
-            --input ./example/xml \
-            --output ./example/themes/mkdocs-readthedocs/docs \
-            --config ./example/themes/mkdocs-readthedocs/.doxybook/config.json
-          cd ./example/themes/mkdocs-readthedocs
-          mkdocs build
-          cp -rv ./site ${{ github.workspace }}/public/mkdocs-readthedocs
-      - name: Build MkDocs - Material Reference
-        shell: bash
-        run: |
-          doxybook \
-            --input ./example/xml \
-            --output ./example/themes/mkdocs-material/docs \
-            --config ./example/themes/mkdocs-material/.doxybook/config.json
-          cd ./example/themes/mkdocs-material
-          mkdocs build
-          cp -rv ./site ${{ github.workspace }}/public/mkdocs-material
-      - name: Build MkDocs - Bootswatch Reference
-        shell: bash
-        run: |
-          doxybook \
-            --input ./example/xml \
-            --output ./example/themes/mkdocs-bootswatch/docs \
-            --config ./example/themes/mkdocs-bootswatch/.doxybook/config.json
-          cd ./example/themes/mkdocs-bootswatch
-          mkdocs build
-          cp -rv ./site ${{ github.workspace }}/public/mkdocs-bootswatch
-      - name: Build Hugo - Learn Reference
-        shell: bash
-        run: |
-          doxybook \
-            --input ./example/xml \
-            --output ./example/themes/hugo-learn/content \
-            --config ./example/themes/hugo-learn/.doxybook/config.json \
-            --templates ./example/themes/hugo-learn/.doxybook/templates
-          cd ./example/themes/hugo-learn
-          hugo
-          cp -rv ./public ${{ github.workspace }}/public/hugo-learn
-      - name: Build Hugo - Book Reference
-        shell: bash
-        run: |
-          doxybook \
-            --input ./example/xml \
-            --output ./example/themes/hugo-book/content \
-            --config ./example/themes/hugo-book/.doxybook/config.json \
-            --templates ./example/themes/hugo-book/.doxybook/templates
-          cd ./example/themes/hugo-book
-          hugo
-          cp -rv ./public ${{ github.workspace }}/public/hugo-book
+     # - name: Build main docs
+      #  run: |
+        #  cd Doxygen
+       #   doxygen
+         # cd ..
+          #doxybook \
+           #   --input ./docs/xml \
+            #  --output ./docs/reference \
+             # --config ./docs/.doxybook/config.json 
+          #mkdocs build
+          #cp -rv ./site/. ${{ github.workspace }}/public
+     
+     
       - name: Build GitBook - Default Reference
         shell: bash
         run: |
