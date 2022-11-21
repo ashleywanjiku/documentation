@@ -12,40 +12,9 @@
 
 class config_arg {
 public:
-    template <typename T>
-    std::string key;
-    std::function<
-        void(config_arg const&, doxybook::config& config)>
-        loadFunc;
-    std::function<
-        void(config_arg const&, doxybook::config const& config)>
-        saveFunc;
+   
+   
     
-    config_arg(T doxybook::config::*ref, std::string const& key)
-        : key (std::move(key)) {
-        loadFunc =
-            [=](config_arg const& self,
-                doxybook::config& config
-               ) {
-            
-            }
-            catch (std::exception& e) {
-                throw EXCEPTION(
-                    "Failed to get config value {} error: {}",
-                    self.key,
-                    e.what());
-            }
-        };
-        saveFunc =
-            [=](config_arg const& self,
-                doxybook::config const& config
-                ) {
-           
-        };
-    }
-
-    
-};
 
 static const std::vector<config_arg> CONFIG_ARGS = {
     config_arg(&doxybook::config::base_url, "baseUrl"),
