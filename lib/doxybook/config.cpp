@@ -8,13 +8,47 @@
 
 #include <doxybook/config.hpp>
 #include <doxybook/exception_utils.hpp>
+#include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
 #include <fstream>
 
 class config_arg {
 public:
-   
-   
-    
+    template <typename T>
+    config_arg(T doxybook::config::*ref, std::string const& key)
+        : key(std::move(key)) {
+        loadFunc =
+            [=](config_arg const& self,
+                doxybook::config& config,
+                nlohmann::json const& json) {
+            try {
+                if (json.contains(self.key)) {
+                    config.*ref = json.at(self.key).get<T>();
+                }
+            }
+            catch (std::exception& e) {
+                throw EXCEPTION(
+                    "Failed to get config value {} error: {}",
+                    self.key,
+                    e.what());
+            }
+        };
+        saveFunc =
+            [=](config_arg const& self,
+                doxybook::config const& config,
+                nlohmann::json& json) {
+            json[self.key] = config.*ref;
+        };
+    }
+
+    std::string key;
+    std::function<
+        void(config_arg const&, doxybook::config& config, nlohmann::json const&)>
+        loadFunc;
+    std::function<
+        void(config_arg const&, doxybook::config const& config, nlohmann::json&)>
+        saveFunc;
+};
 
 static const std::vector<config_arg> CONFIG_ARGS = {
     config_arg(&doxybook::config::base_url, "baseUrl"),
@@ -103,6 +137,44 @@ doxybook::load_config(config& config, std::string const& path) {
     std::string
         str((std::istreambuf_iterator<char>(file)),
             std::istreambuf_iterator<char>());
-    
+    try {
+        auto const json = nlohmann::json::parse(str);
+
+        for (auto const& arg: CONFIG_ARGS) {
+            arg.loadFunc(arg, config, json);
+        }
+    }
+    catch (std::exception& e) {
+        throw EXCEPTION("Failed to pase config error {}", e.what());
+    }
 }
 
+void
+doxybook::load_config_data(config& config, std::string_view src) {
+    try {
+        auto const json = nlohmann::json::parse(src);
+
+        for (auto const& arg: CONFIG_ARGS) {
+            arg.loadFunc(arg, config, json);
+        }
+    }
+    catch (std::exception& e) {
+        throw EXCEPTION("Failed to pase config error {}", e.what());
+    }
+}
+
+void
+doxybook::save_config(config& config, std::string const& path) {
+    spdlog::info("Creating default config {}", path);
+    std::ofstream file(path);
+    if (!file) {
+        throw EXCEPTION("Failed to open file {} for writing", path);
+    }
+
+    nlohmann::json json;
+    for (auto const& arg: CONFIG_ARGS) {
+        arg.saveFunc(arg, config, json);
+    }
+
+    file << json.dump(2);
+}
