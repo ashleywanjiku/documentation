@@ -110,7 +110,7 @@ if (DOXYBOOK_BUILD_INSTALLER)
 
     write_basic_package_version_file(
             doxybook-config-version.cmake
-            VERSION ${PACKAGE_VERSION}
+            VERSION 1.0.0
             COMPATIBILITY ${compatibility_mode}
     )
 
