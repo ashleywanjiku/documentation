@@ -191,7 +191,7 @@ jobs:
         run: |
           cmake -E make_directory build
           cd build
-          cmake .. -D CMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux -D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX=/bin/doxybook
+          cmake .. -D CMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux -D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake -D CMAKE_INSTALL_PREFIX=/bin/doxybook
           cmake --build . --config Release
           sudo cmake --install .
       - name: Build main docs
@@ -205,11 +205,7 @@ jobs:
             --config ./Doxygen/.doxybook/config.json
           mkdocs build
           cp -rv ./site/. ${{ github.workspace }}/public
-      - name: Build Example Doxygen
-        shell: bash
-        run: |
-          cd example
-          doxygen
+          
       - name: Build MkDocs - ReadTheDocs Reference
         shell: bash
         run: |
