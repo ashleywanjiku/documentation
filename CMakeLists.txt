@@ -161,7 +161,7 @@ if (DOXYBOOK_BUILD_INSTALLER AND DOXYBOOK_BUILD_PACKAGE)
     set(CPACK_SOURCE_IGNORE_FILES ${GITIGNORE_CONTENTS})
 
     # Always include CPack at last
-    include(CPack)
+   # include(CPack)
 endif ()
 
 #######################################################
