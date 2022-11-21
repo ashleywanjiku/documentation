@@ -176,7 +176,7 @@ jobs:
           cd Doxygen
           doxygen
           doxybook \
-            --input ./Doxygen/xml \
+            --input ./doxygen/xml \
             --output ./Doxygen/reference \
             --config ./Doxygen/.doxybook/config.json
           mkdocs build
