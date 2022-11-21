@@ -135,25 +135,3 @@ doxybook::load_config(config& config, std::string const& path) {
     
 }
 
-void
-doxybook::load_config_data(config& config, std::string_view src) {
-    try {
-        auto const json = nlohmann::json::parse(src);
-
-        for (auto const& arg: CONFIG_ARGS) {
-            arg.loadFunc(arg, config, json);
-        }
-    }
-    catch (std::exception& e) {
-        throw EXCEPTION("Failed to pase config error {}", e.what());
-    }
-}
-
-void
-doxybook::save_config(config& config, std::string const& path) {
-    spdlog::info("Creating default config {}", path);
-    std::ofstream file(path);
-    if (!file) {
-        throw EXCEPTION("Failed to open file {} for writing", path);
-    }
-}
