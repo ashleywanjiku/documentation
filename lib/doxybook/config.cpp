@@ -17,12 +17,8 @@ public:
         : key(std::move(key)) {
         loadFunc =
             [=](config_arg const& self,
-                doxybook::config& config
-                ) {
-            try {
-                if (json.contains(self.key)) {
-                    config.*ref = json.at(self.key).get<T>();
-                }
+                doxybook::config& config) {
+            
             }
             catch (std::exception& e) {
                 throw EXCEPTION(
@@ -35,7 +31,7 @@ public:
             [=](config_arg const& self,
                 doxybook::config const& config
                 ) {
-            json[self.key] = config.*ref;
+           
         };
     }
 
@@ -135,16 +131,7 @@ doxybook::load_config(config& config, std::string const& path) {
     std::string
         str((std::istreambuf_iterator<char>(file)),
             std::istreambuf_iterator<char>());
-    try {
-        auto const json = nlohmann::json::parse(str);
-
-        for (auto const& arg: CONFIG_ARGS) {
-            arg.loadFunc(arg, config, json);
-        }
-    }
-    catch (std::exception& e) {
-        throw EXCEPTION("Failed to pase config error {}", e.what());
-    }
+    
 }
 
 void
