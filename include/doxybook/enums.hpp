@@ -9,7 +9,7 @@
 #ifndef DOXYBOOK_ENUMS_HPP
 #define DOXYBOOK_ENUMS_HPP
 
-#include <nlohmann/json.hpp>
+
 #include <string>
 
 namespace doxybook {
