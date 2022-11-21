@@ -11,7 +11,7 @@
 
 #include <doxybook/exception.hpp>
 #include <doxybook/path.hpp>
-#include <fmt/format.h>
+
 
 #define __FILENAME__ doxybook::path::filename(__FILE__)
 
