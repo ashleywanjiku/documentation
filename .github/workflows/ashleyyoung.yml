@@ -97,7 +97,7 @@ jobs:
      
       - name: Build
         working-directory: ./build
-        run: cmake --build . --parallel ${{ steps.cpu-cores.outputs.count }} --config Release
+        run: cmake --build . --config Release
 
       - name: Test
         working-directory: ./build
