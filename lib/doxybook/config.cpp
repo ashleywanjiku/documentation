@@ -17,7 +17,8 @@ public:
         : key(std::move(key)) {
         loadFunc =
             [=](config_arg const& self,
-                doxybook::config& config) {
+                doxybook::config& config
+               ) {
             
             }
             catch (std::exception& e) {
@@ -155,11 +156,4 @@ doxybook::save_config(config& config, std::string const& path) {
     if (!file) {
         throw EXCEPTION("Failed to open file {} for writing", path);
     }
-
-    nlohmann::json json;
-    for (auto const& arg: CONFIG_ARGS) {
-        arg.saveFunc(arg, config, json);
-    }
-
-    file << json.dump(2);
 }
