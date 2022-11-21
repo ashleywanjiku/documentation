@@ -17,8 +17,8 @@ public:
         : key(std::move(key)) {
         loadFunc =
             [=](config_arg const& self,
-                doxybook::config& config,
-                nlohmann::json const& json) {
+                doxybook::config& config
+                ) {
             try {
                 if (json.contains(self.key)) {
                     config.*ref = json.at(self.key).get<T>();
@@ -33,8 +33,8 @@ public:
         };
         saveFunc =
             [=](config_arg const& self,
-                doxybook::config const& config,
-                nlohmann::json& json) {
+                doxybook::config const& config
+                ) {
             json[self.key] = config.*ref;
         };
     }
