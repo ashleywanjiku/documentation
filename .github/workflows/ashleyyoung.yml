@@ -172,10 +172,9 @@ jobs:
           sudo cmake --install .
           
       - name: Build main docs
-        run: 
+        run: |
           cd Doxygen
           doxygen
-          cd ..
           doxybook \
             --input ./Doxygen/xml \
             --output ./Doxygen/reference \
