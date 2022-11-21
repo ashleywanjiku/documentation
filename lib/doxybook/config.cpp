@@ -41,10 +41,10 @@ public:
 
     std::string key;
     std::function<
-        void(config_arg const&, doxybook::config& config, nlohmann::json const&)>
+        void(config_arg const&, doxybook::config& config)>
         loadFunc;
     std::function<
-        void(config_arg const&, doxybook::config const& config, nlohmann::json&)>
+        void(config_arg const&, doxybook::config const& config)>
         saveFunc;
 };
 
