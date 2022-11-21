@@ -13,8 +13,16 @@
 class config_arg {
 public:
     template <typename T>
+    std::string key;
+    std::function<
+        void(config_arg const&, doxybook::config& config)>
+        loadFunc;
+    std::function<
+        void(config_arg const&, doxybook::config const& config)>
+        saveFunc;
+    
     config_arg(T doxybook::config::*ref, std::string const& key)
-        : key(std::move(key)) {
+        : key (std::move(key)) {
         loadFunc =
             [=](config_arg const& self,
                 doxybook::config& config
@@ -36,13 +44,7 @@ public:
         };
     }
 
-    std::string key;
-    std::function<
-        void(config_arg const&, doxybook::config& config)>
-        loadFunc;
-    std::function<
-        void(config_arg const&, doxybook::config const& config)>
-        saveFunc;
+    
 };
 
 static const std::vector<config_arg> CONFIG_ARGS = {
