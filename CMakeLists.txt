@@ -190,7 +190,7 @@ endif ()
 
 if (DOXYBOOK_BUILD_TESTS)
     enable_testing()
-    add_subdirectory(test)
+    #add_subdirectory(test)
 endif ()
 
 if (DOXYBOOK_BUILD_EXAMPLES)
@@ -199,6 +199,6 @@ endif ()
 
 if (DOXYBOOK_BUILD_DOCS)
     # docs come last because they depend on the examples
-    add_subdirectory(docs)
+    # add_subdirectory(docs)
 endif ()
 
