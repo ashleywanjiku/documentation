@@ -15,14 +15,6 @@
 
 #define __FILENAME__ doxybook::path::filename(__FILE__)
 
-#define EXCEPTION(MSG, ...)                                        \
-    doxybook::exception(                                           \
-        #fmt::format("Exception at {}:{} ", __FILENAME__, __LINE__) \
-        + fmt::format(MSG, ##__VA_ARGS__))
 
-#define WARNING(MSG, ...)                                        \
-    doxybook::spdlog::warn(                                      \
-        #fmt::format("Warning at {}:{} ", __FILENAME__, __LINE__) \
-        + fmt::format(MSG, ##__VA_ARGS__))
 
 #endif
