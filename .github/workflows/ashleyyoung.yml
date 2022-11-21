@@ -172,13 +172,10 @@ jobs:
           sudo cmake --install .
           
       - name: Build main docs
-        run: |
-          cd Doxygen
-          doxygen
-          doxybook \
-            --input ./doxygen/xml \
-            --output ./Doxygen/reference \
-            --config ./Doxygen/.doxybook/config.json
+        run: cd Doxygen
+         
+      - name : Build doxybook
+        run: doxybook --input ./doxygen/xml --output ./Doxygen/reference --config ./Doxygen/.doxybook/config.json
           mkdocs build
           cp -rv ./site/. ${{ github.workspace }}/public
           
