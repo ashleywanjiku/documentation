@@ -199,7 +199,7 @@ jobs:
           cd Doxygen
           doxygen
           cd ..
-          build \
+          doxybook \
             --input ./Doxygen/xml \
             --output ./Doxygen/reference \
             --config ./Doxygen/.doxybook/config.json
