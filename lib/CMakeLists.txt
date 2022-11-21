@@ -16,27 +16,27 @@ target_include_directories(doxybook
 set_target_properties(doxybook PROPERTIES CXX_STANDARD 17)
 
 # Install
-install(TARGETS ${PROJECT_NAME}
-        EXPORT ${PROJECT_NAME}
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        )
+#install(TARGETS ${PROJECT_NAME}
+      #  EXPORT ${PROJECT_NAME}
+        #ARCHIVE DESTINATION lib
+        #LIBRARY DESTINATION lib
+        #)
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include
         DESTINATION . FILES_MATCHING PATTERN "*.hpp"
         )
 
 # Libraries
-target_link_libraries(${PROJECT_NAME} PUBLIC
-        fmt::fmt
-        fmt::fmt-header-only
-        spdlog::spdlog_header_only
-        pantor::inja
-        nlohmann_json
-        nlohmann_json::nlohmann_json)
-if (MSVC)
-    target_link_libraries(${PROJECT_NAME} PRIVATE dirent::dirent)
-endif ()
-if (MSVC)
-    add_compile_options(/EHsc)
-endif ()
+#target_link_libraries(${PROJECT_NAME} PUBLIC
+     #   fmt::fmt
+      #  fmt::fmt-header-only
+       # spdlog::spdlog_header_only
+        #pantor::inja
+        #nlohmann_json
+        #nlohmann_json::nlohmann_json)
+#if (MSVC)
+   # target_link_libraries(${PROJECT_NAME} PRIVATE dirent::dirent)
+#endif ()
+# if (MSVC)
+   # add_compile_options(/EHsc)
+#endif ()
