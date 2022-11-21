@@ -180,9 +180,9 @@ jobs:
             doxygen Doxyfile
             cd ..
             mkdir -p /tmp/gh-pages
-            cp -rf ./example/temp/xml /tmp/xml
-            cp -rf ./example/temp/html /tmp/gh-pages/original
-            cp ./example/index.html /tmp/gh-pages/index.html
+            cp -rf ./Doxygen/xml /tmp/xml
+            cp -rf ./Doxygen/html /tmp/gh-pages/original
+            cp ./Doxygen/index.html /tmp/gh-pages/index.html
 
       - name : Build doxybook
         run: doxybook --input ./doxygen/xml --output ./Doxygen/reference --config ./Doxygen/.doxybook/config.json
