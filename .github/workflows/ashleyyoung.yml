@@ -136,51 +136,27 @@ jobs:
         with:
           submodules: true
 
-      - name: Update Contributors
-        if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/develop')
-        uses: akhilmhdh/contributors-readme-action@v2.3.6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          image_size: 100
-          columns_per_row: 6
-         # readme_path: docs/acknowledgments.md
-          committer_username: alandefreitas
-          committer_email: alandefreitas@gmail.com
-        continue-on-error: true
-
-     # - name: List acknowledgments
-       # shell: bash
-        #run: |
-          #cat docs/acknowledgments.md
       - name: Dependencies
         shell: bash
         run: |
           sudo apt-get install zip unzip python3-setuptools -y
           mkdir -p ${{ github.workspace }}/public
+          
       - name: Download Node
         uses: actions/setup-node@v3
         with:
           node-version: 8.x
-
-      - name: Download Hugo
-        shell: bash
-        run: |
-          mkdir hugo
-          cd hugo
-          wget https://github.com/gohugoio/hugo/releases/download/v0.105.0/hugo_extended_0.105.0_Linux-64bit.tar.gz
-          tar xvf hugo_extended_0.105.0_Linux-64bit.tar.gz
-          sudo mv ./hugo /usr/local/bin/hugo
-          sudo chmod +x /usr/local/bin/hugo
-          hugo version
+          
       - name: Download MkDocs
         shell: bash
         run: |
           sudo python3 -m pip install mkdocs mkdocs-material mkdocs-bootswatch mkdocs-macros-plugin
+          
       - name: Download GitBook CLI
         shell: bash
         run: |
           sudo npm install gitbook-cli -g
+          
       - name: Install doxygen
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
@@ -194,8 +170,9 @@ jobs:
           cmake .. -D CMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux -D CMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake -D CMAKE_INSTALL_PREFIX=/bin/doxybook
           cmake --build . --config Release
           sudo cmake --install .
+          
       - name: Build main docs
-        run: |
+        run: 
           cd Doxygen
           doxygen
           cd ..
@@ -216,6 +193,7 @@ jobs:
           cd ./example/themes/mkdocs-readthedocs
           mkdocs build
           cp -rv ./site ${{ github.workspace }}/public/mkdocs-readthedocs
+          
       - name: Build MkDocs - Material Reference
         shell: bash
         run: |
@@ -236,27 +214,7 @@ jobs:
           cd ./example/themes/mkdocs-bootswatch
           mkdocs build
           cp -rv ./site ${{ github.workspace }}/public/mkdocs-bootswatch
-      - name: Build Hugo - Learn Reference
-        shell: bash
-        run: |
-          doxybook \
-            --input ./example/xml \
-            --output ./example/themes/hugo-learn/content \
-            --config ./example/themes/hugo-learn/.doxybook/config.json \
-            --templates ./example/themes/hugo-learn/.doxybook/templates
-          cd ./example/themes/hugo-learn
-          hugo
-          cp -rv ./public ${{ github.workspace }}/public/hugo-learn
-      - name: Build Hugo - Book Reference
-        shell: bash
-        run: |
-          doxybook \
-            --input ./example/xml \
-            --output ./example/themes/hugo-book/content \
-            --config ./example/themes/hugo-book/.doxybook/config.json \
-            --templates ./example/themes/hugo-book/.doxybook/templates
-          cd ./example/themes/hugo-book
-          hugo
+      
           cp -rv ./public ${{ github.workspace }}/public/hugo-book
       - name: Build GitBook - Default Reference
         shell: bash
@@ -269,7 +227,7 @@ jobs:
             --summary-output ./example/themes/gitbook/SUMMARY.md
           cd ./example/themes/gitbook
           gitbook build
-          cp -rv ./_book ${{ github.workspace }}/public/gitbook
+         
       - name: Build original
         shell: bash
         run: |
