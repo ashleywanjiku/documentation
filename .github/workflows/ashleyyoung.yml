@@ -174,7 +174,7 @@ jobs:
       - name: Build main docs
         run: |
          cd Doxygen
-         doxygen Deckerfile
+         doxygen Dockerfile
          cd ..
          doxybook --input ./doxygen/xml --output ./Doxygen/reference --config ./Doxygen/.doxybook/config.json
           mkdocs build
