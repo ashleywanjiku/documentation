@@ -8,7 +8,6 @@
 
 #include <doxybook/config.hpp>
 #include <doxybook/exception_utils.hpp>
-#include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 #include <fstream>
 
