@@ -31,7 +31,7 @@ include(cmake/doxybook/dev-options.cmake)
 #######################################################
 ### Libraries                                       ###
 #######################################################
-include(cmake/doxybook/dependencies.cmake)
+include(cmake/doxybook/dependancies.cmake)
 add_subdirectory(lib)
 add_subdirectory(tools)
 
