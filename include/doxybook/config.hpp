@@ -10,6 +10,7 @@
 #define DOXYBOOK_CONFIG_HPP
 
 #include <doxybook/enums.hpp>
+#include <vector>
 #include <string>
 
 namespace doxybook {
