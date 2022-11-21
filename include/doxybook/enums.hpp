@@ -215,28 +215,28 @@ namespace doxybook {
     type_to_index_title(config const& config, folder_category type);
 
     /// Convert a visibility type to a json string
-    inline void
-    to_json(nlohmann::json& j, visibility const& p) {
-        j = to_str(p);
-    }
+    #inline void
+   # to_json(nlohmann::json& j, visibility const& p) {
+       # j = to_str(p);
+   # }
 
     /// Convert a json string to a visibility type
-    inline void
-    from_json(nlohmann::json const& j, visibility& p) {
-        p = to_enum_visibility(j.get<std::string>());
-    }
+    #inline void
+   # from_json(nlohmann::json const& j, visibility& p) {
+       # p = to_enum_visibility(j.get<std::string>());
+    #}
 
     /// Convert a folder category to a json string
-    inline void
-    to_json(nlohmann::json& j, folder_category const& p) {
-        j = to_str(p);
-    }
+    #inline void
+    #to_json(nlohmann::json& j, folder_category const& p) {
+        #j = to_str(p);
+    #}
 
     /// Convert a json string to a folder category
-    inline void
-    from_json(nlohmann::json const& j, folder_category& p) {
-        p = to_enum_folder_category(j.get<std::string>());
-    }
+    #inline void
+    #from_json(nlohmann::json const& j, folder_category& p) {
+     #   p = to_enum_folder_category(j.get<std::string>());
+    #}
 } // namespace doxybook
 
 #endif
